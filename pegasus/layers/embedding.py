@@ -54,13 +54,13 @@ class Embedding(object):
   @property
   def weights_VxD(self):
     """Gets embedding weights."""
-    with tf.variable_scope("embeddings", reuse=tf.AUTO_REUSE):
+    with tf.compat.v1.variable_scope("embeddings", reuse=tf.compat.v1.AUTO_REUSE):
       # Initialization is important here, and a normal distribution with stdev
       # equal to rsqrt hidden_size is significantly better than the default
       # initialization used for other layers (fan in / out avg).
-      embeddings_VxD = tf.get_variable(
+      embeddings_VxD = tf.compat.v1.get_variable(
           self._name, [self._vocab_size, self._hidden_size],
           initializer=tf.random_normal_initializer(
-              stddev=self._hidden_size**-0.5, dtype=self._dtype),
+              stddev=self._hidden_size**-0.5),
           dtype=self._dtype)
     return embeddings_VxD

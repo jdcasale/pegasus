@@ -38,11 +38,11 @@ class Attention(object):
     if hidden_size % num_heads != 0:
       raise ValueError("Number of attention heads must divide hidden size")
 
-    self._q_layer = tf.layers.Dense(hidden_size, use_bias=False, name="q_proj")
-    self._k_layer = tf.layers.Dense(hidden_size, use_bias=False, name="k_proj")
-    self._v_layer = tf.layers.Dense(hidden_size, use_bias=False, name="v_proj")
-    self._output_layer = tf.layers.Dense(
-        hidden_size, use_bias=False, name="output_proj")
+    self._q_layer = tf.keras.layers.Dense(hidden_size, use_bias=False, name="q_proj/")
+    self._k_layer = tf.keras.layers.Dense(hidden_size, use_bias=False, name="k_proj/")
+    self._v_layer = tf.keras.layers.Dense(hidden_size, use_bias=False, name="v_proj/")
+    self._output_layer = tf.keras.layers.Dense(
+        hidden_size, use_bias=False, name="output_proj/")
     self._num_heads = num_heads
     self._hidden_size = hidden_size
     self._attention_dropout = attention_dropout
@@ -103,7 +103,7 @@ def ids_to_bias(ids_BxI, dtype=tf.float32, padding_id=0):
 
 def upper_triangle_bias(D, dtype=tf.float32):
   """Create a upper triangle matrix for decoding bias."""
-  upper_triangle_DxD = 1 - tf.matrix_band_part(
+  upper_triangle_DxD = 1 - tf.compat.v1.matrix_band_part(
       tf.ones([D, D], dtype=dtype), -1, 0)
   tensor_1xDxD = tf.expand_dims(upper_triangle_DxD * dtype.min, axis=0)
   return tensor_1xDxD

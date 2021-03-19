@@ -34,7 +34,7 @@ def encode(text: tf.Tensor, max_len: int, vocab_filename: str,
   """EncodeOp."""
   if encoder_type not in ["sentencepiece", "sentencepiece_newline"]:
     raise ValueError("Unsupported encoder type: %s" % encoder_type)
-  sp_model = tf.gfile.GFile(vocab_filename, "rb").read()
+  sp_model = tf.compat.v1.gfile.GFile(vocab_filename, "rb").read()
   tokenizer = tf_text.SentencepieceTokenizer(model=sp_model)
   batch_size = text.shape[0]
   if encoder_type == "sentencepiece_newline":
@@ -56,7 +56,7 @@ def decode(ids: tf.Tensor, vocab_filename: str, encoder_type: str):
   """DecodeOp."""
   if encoder_type not in ["sentencepiece", "sentencepiece_newline"]:
     raise ValueError("Unsupported encoder type: %s" % encoder_type)
-  sp_model = tf.gfile.GFile(vocab_filename, "rb").read()
+  sp_model = tf.compat.v1.gfile.GFile(vocab_filename, "rb").read()
   tokenizer = tf_text.SentencepieceTokenizer(model=sp_model)
   ids = tf.where(ids > 1 + _SHIFT_RESERVED_TOKENS, ids - _SHIFT_RESERVED_TOKENS,
                  ids)
@@ -90,7 +90,7 @@ class SentencePieceEncoder(object):
                shift_reserved_tokens: int = _SHIFT_RESERVED_TOKENS,
                newline_symbol: str = ""):
     self._tokenizer = sentencepiece_processor.SentencePieceProcessor()
-    self._sp_model = tf.gfile.GFile(sentencepiece_model_file, "rb").read()
+    self._sp_model = tf.compat.v1.gfile.GFile(sentencepiece_model_file, "rb").read()
     self._tokenizer.LoadFromSerializedProto(self._sp_model)
     self._shift_reserved_tokens = shift_reserved_tokens
     self._newline_symbol = newline_symbol
@@ -111,7 +111,7 @@ class SentencePieceEncoder(object):
         i - self._shift_reserved_tokens
         if i > 1 + self._shift_reserved_tokens else i for i in ids
     ]
-    text = self._tokenizer.DecodeIds(ids)
+    text = self._tokenizer.Decode(ids)
     if self._newline_symbol:
       text = text.replace(self._newline_symbol, "\n")
     return text

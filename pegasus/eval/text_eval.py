@@ -18,6 +18,7 @@ import re
 
 from absl import logging
 import numpy as np
+from tensorflow_core.python.ops import summary_ops_v2
 
 from pegasus.eval.bleu import bleu_scorer
 from pegasus.eval.length import length_scorer
@@ -26,7 +27,6 @@ import tensorflow as tf
 
 from rouge_score import rouge_scorer
 from rouge_score import scoring
-from tensorflow.contrib import summary as contrib_summary
 
 _ROUGE_METRIC = "rouge"
 _BLEU_METRIC = "bleu"
@@ -231,27 +231,27 @@ def _write_aggregate_summaries(model_dir, global_step, eval_tag,
   """Writes text metrics as summaries."""
 
   eval_dir = os.path.join(model_dir, eval_tag)
-  summary_writer = contrib_summary.create_file_writer(eval_dir)
+  summary_writer = summary_ops_v2.create_file_writer(eval_dir)
   with summary_writer.as_default(), \
-      contrib_summary.always_record_summaries():
+          summary_ops_v2.always_record_summaries():
     for k, v in sorted(aggregates_dict[_ROUGE_METRIC].items()):
-      contrib_summary.scalar(
+      summary_ops_v2.scalar(
           "text_eval/%s-R" % k, v.mid.recall, step=global_step)
-      contrib_summary.scalar(
+      summary_ops_v2.scalar(
           "text_eval/%s-P" % k, v.mid.precision, step=global_step)
-      contrib_summary.scalar(
+      summary_ops_v2.scalar(
           "text_eval/%s-F" % k, v.mid.fmeasure, step=global_step)
     for k, v in sorted(aggregates_dict[_BLEU_METRIC].items()):
-      contrib_summary.scalar("text_eval/%s" % k, v.mid.bleu, step=global_step)
+      summary_ops_v2.scalar("text_eval/%s" % k, v.mid.bleu, step=global_step)
     for k, v in sorted(aggregates_dict[_REPETITION_METRIC].items()):
-      contrib_summary.scalar(
+      summary_ops_v2.scalar(
           "text_eval/%s-T" % k, v.mid.target_ratio, step=global_step)
-      contrib_summary.scalar(
+      summary_ops_v2.scalar(
           "text_eval/%s-P" % k, v.mid.prediction_ratio, step=global_step)
     for k, v in sorted(aggregates_dict[_LENGTH_METRIC].items()):
-      contrib_summary.scalar(
+      summary_ops_v2.scalar(
           "text_eval/%s-T" % k, v.mid.target_length, step=global_step)
-      contrib_summary.scalar(
+      summary_ops_v2.scalar(
           "text_eval/%s-P" % k, v.mid.prediction_length, step=global_step)
-      contrib_summary.scalar(
+      summary_ops_v2.scalar(
           "text_eval/%s-R" % k, v.mid.relative_length, step=global_step)
