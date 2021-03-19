@@ -18,8 +18,5 @@
       <option name="WHILE_BRACE_FORCE" value="3" />
       <option name="FOR_BRACE_FORCE" value="3" />
     </codeStyleSettings>
-    <codeStyleSettings language="Rust">
-      <option name="ALIGN_MULTILINE_CHAINED_METHODS" value="true" />
-    </codeStyleSettings>
   </code_scheme>
 </component>

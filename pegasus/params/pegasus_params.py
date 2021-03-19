@@ -23,6 +23,9 @@ from pegasus.models import transformer
 from pegasus.ops import public_parsing_ops
 from pegasus.params import registry
 from tensor2tensor.utils import hparam
+from tensorboard.plugins.hparams import hparams_plugin
+
+
 from tensorboard.plugins.hparams.summary_v2 import HParam
 
 # Shift of special tokens id in the vocab file.
